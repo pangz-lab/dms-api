@@ -1,0 +1,19 @@
+cli 
+1. create middleware
+    pangz-cli create middleware [ClassName]
+2. create route
+    pangz-cli create route [ClassName]
+3. create services
+    pangz-cli create service [ClassName]
+4. create repo
+    pangz-cli create repo [ClassName]
+5. create model
+    pangz-cli create model
+     [ClassName]
+
+
+- Error pages
+- Error customization
+- DB Connection 
+- Security JWT
+- Authentication server

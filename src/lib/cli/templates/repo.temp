@@ -1,0 +1,20 @@
+<?php
+declare(strict_types=1);
+namespace PangzLab\App\Repository;
+
+use DI\Container;
+use PangzLab\Lib\Repository\Repository;
+
+class %s extends Repository
+{
+    public function methodName()
+    {
+        /**
+        * your code here....
+        $params = [
+            "_table" => "tableName"
+        ];
+        return $this->container->get('DatabaseService')->getRecords($params);
+        */
+    }
+}

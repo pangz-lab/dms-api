@@ -1,0 +1,36 @@
+<?php
+declare(strict_types=1);
+namespace PangzLab\App;
+
+use PangzLab\Lib\Routing\RouteMethodCollectionInterface;
+use PangzLab\Lib\Routing\RouteUnit;
+
+class RouteSetting implements RouteMethodCollectionInterface
+{
+    const VERSION = "v1";
+    public static function get(): array
+    {
+        $v = self::VERSION;
+        return [
+            new RouteUnit('/books/{id}', ['User:getBooks'], 'books1'),
+            // new RouteUnit('/books/{id}/reset', ['User:getBooks','User:getBooks', 'User:getBooks']),
+            new RouteUnit("/wallets", ['Wallet:getSummary']),
+            new RouteUnit("/$v/transactions", ['Transaction:getSummary']),
+        ];
+    }
+
+    public static function post(): array {return [];}
+    public static function put(): array {return [];}
+    public static function delete(): array {return [];}
+    public static function head(): array {return [];}
+    public static function patch(): array {return [];}
+    public static function options(): array {return [];}
+
+    public static function any(): array
+    {
+        return [
+            new RouteUnit('/', ['User:getList']),
+            new RouteUnit('/books', ['User:getList']),
+        ];
+    }
+}
