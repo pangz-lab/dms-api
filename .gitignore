@@ -4,4 +4,4 @@ composer.lock
 vendor/
 /.tmp
 *.cache
-.vscode/
+/.vscode
