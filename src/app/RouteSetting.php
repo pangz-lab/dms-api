@@ -12,10 +12,13 @@ class RouteSetting implements RouteMethodCollectionInterface
     {
         $v = self::VERSION;
         return [
-            new RouteUnit('/books/{id}', ['User:getBooks'], 'books1'),
+            // new RouteUnit('/books/{id}', ['User:getBooks'], 'books1'),
             // new RouteUnit('/books/{id}/reset', ['User:getBooks','User:getBooks', 'User:getBooks']),
-            new RouteUnit("/wallets", ['Wallet:getSummary']),
+            // new RouteUnit("/wallets", ['Wallet:getSummary']),
             new RouteUnit("/$v/transactions", ['Transaction:getSummary']),
+            new RouteUnit("/$v/transactions/list", ['Transaction:getList']),
+            new RouteUnit("/$v/histories/update-summary", ['History:getUpdateEventSummary']),
+            new RouteUnit("/$v/balances/summary/stakevsrewards", ['Balance:getStakeVsRewards']),
         ];
     }
 

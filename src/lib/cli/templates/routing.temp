@@ -16,7 +16,7 @@ class %s extends Route
         parent::__construct($container);
     }
 
-    public function methodName(Request $request, Response $response, $args)
+    public function methodName(Request $request, Response $response, $args): Response
     {
         /**
         * your code here....
