@@ -3,6 +3,8 @@ declare(strict_types=1);
 namespace PangzLab\App\Repository;
 use PangzLab\Lib\Repository\Repository;
 
+namespace PangzLab\App\Service\MySqlDbService;
+
 use DI\Container;
 
 class User extends Repository
@@ -12,6 +14,6 @@ class User extends Repository
         $params = [
             "_table" => "dms_wallet"
         ];
-        return $this->container->get('DatabaseService')->getRecords($params);
+        return $this->container->get('DatabaseService')->getInstance("mysql")->getData($params);
     }
 }

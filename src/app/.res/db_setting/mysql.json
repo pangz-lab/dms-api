@@ -1,0 +1,8 @@
+{
+    "dms_api" : {
+        "database" : "dudezmobi_staking",
+        "host"     : "localhost",
+        "username" : "root",
+        "password" : ""
+    }
+}

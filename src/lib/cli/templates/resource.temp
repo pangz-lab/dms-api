@@ -1,0 +1,16 @@
+<?php
+declare(strict_types=1);
+namespace PangzLab\App\Resource;
+
+use PangzLab\Lib\Resource\AbstractResource;
+
+class DbSetting extends AbstractResource
+{    
+    protected static function getFileBasePath(): string
+    {
+        /**
+        * update the base path. Default is pointing to .res
+        */
+        return dirname(__FILE__, 2).self::DS.".res";
+    }
+}

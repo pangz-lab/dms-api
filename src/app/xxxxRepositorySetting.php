@@ -4,8 +4,11 @@ namespace PangzLab\App;
 
 use PangzLab\Lib\Data\DataRepositorySettingInterface;
 
+
+//Might be removed - no use
 class RepositorySetting implements DataRepositorySettingInterface
 {
+    // This might be removed - no use
     private $activeSetting;
     private $setting = [
         "mysqldb" => [

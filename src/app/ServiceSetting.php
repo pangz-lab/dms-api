@@ -16,7 +16,7 @@ class ServiceSetting implements ExecutionContextInterface
     public static function methodPost(): array
     {
         return [
-            'PostService',
+            // 'PostService',
         ];
     }
     

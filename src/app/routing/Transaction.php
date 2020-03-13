@@ -8,12 +8,25 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Container\ContainerInterface;
 
 use PangzLab\Lib\Routing\Route;
+use PangzLab\App\Repository\Transaction as TransactionRepo;
 
 class Transaction extends Route
 {
+    private $repository;
     public function __construct(Container $container)
     {
         parent::__construct($container);
+        $this->repository = new TransactionRepo($container);
+    }
+
+    public function testGetSummary(Request $request, Response $response, $args)
+    {
+        $testData = $this->repository->getSummary();
+        $payload = json_encode([ 'data' => $testData ]);
+
+        $response->getBody()->write($payload);
+        $r = $response->withHeader('Access-Control-Allow-Origin','*');
+        return $r->withHeader('Content-Type','application/json');
     }
 
     public function getSummary(Request $request, Response $response, $args)

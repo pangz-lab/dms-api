@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 namespace PangzLab\Lib\Data;
-use PangzLab\Lib\Data\DatabaseParameter as DbParam;
 
 interface DataStructureInterface
 {
     public function getDataType();
     public function getSize();
-    public function createData(DbParam $param);
-    public function getData(DbParam $param);
-    public function updateData(DbParam $param);
-    public function deleteData(DbParam $param);
+    public function createData(array $param);
+    public function getData(array $param);
+    public function updateData(array $param);
+    public function deleteData(array $param);
 }

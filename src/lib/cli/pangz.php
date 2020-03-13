@@ -1,15 +1,5 @@
 <?php
-define("DS", "/");
-define("APP_PATH", dirname(__FILE__, 3).DS.'app');
-define("TEMPLATE_PATH", dirname(__FILE__).DS."templates");
-define("CLI_PATHS", [
-    'MIDDLEWARE' => ["template" => TEMPLATE_PATH.DS.'middleware.temp', "target" =>  APP_PATH.DS.'middleware'],
-    'ROUTING'    => ["template" => TEMPLATE_PATH.DS.'routing.temp', "target" =>  APP_PATH.DS.'routing'],
-    'SERVICE'    => ["template" => TEMPLATE_PATH.DS.'service.temp', "target" =>  APP_PATH.DS.'service'],
-    'REPO'       => ["template" => TEMPLATE_PATH.DS.'repo.temp', "target" =>  APP_PATH.DS.'repo'],
-    'MODEL'      => ["template" => TEMPLATE_PATH.DS.'model.temp', "target" =>  APP_PATH.DS.'model'],
-]);
-
+require_once("../config.php");
 main($argv);
 
 function main($args) {
@@ -30,15 +20,17 @@ function main($args) {
         $fileType = 'routing';
     } elseif(in_array($fileType, ['se', 'ser', 'service'])) {
         $fileType = 'service';
-    } elseif(in_array($fileType, ['re', 'rep', 'repo'])) {
-        $fileType = 'repo';
+    } elseif(in_array($fileType, ['re', 'rep', 'repo', 'repository'])) {
+        $fileType = 'repository';
     } elseif(in_array($fileType, ['mo', 'mod', 'model'])) {
         $fileType = 'model';
+    } elseif(in_array($fileType, ['res', 'resource'])) {
+        $fileType = 'resource';
     } else {
         $fileType = null;
     }
 
-    if($operation == 'c' || $operation == 'create') {
+    if(in_array($operation, ['c','create'])) {
         $operation = 'create';
     } else {
         $operation = null;
@@ -69,12 +61,16 @@ function create_service($param) {
     return create('SERVICE', $param);
 }
 
-function create_repo($param) {
-    return create('REPO', $param);
+function create_repository($param) {
+    return create('REPOSITORY', $param);
 }
 
 function create_model($param) {
     return create('MODEL', $param);
+}
+
+function create_resource($param) {
+    return create('RESOURCE', $param);
 }
 
 function create($fileType, $param) {
@@ -115,7 +111,7 @@ function showHelp() {
     print "$c#####################################################$e\n";
     print "\n\n";
     print " pangz [operation] [type] [FileName] \n\n";
-    $files = ['middleware','model','repo','routing','service'];
+    $files = ['middleware','model','repository','routing','service', 'resource'];
     $ope   = "create";
 
     foreach($files as $currentFile) {

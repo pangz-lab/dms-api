@@ -2,41 +2,31 @@
 declare(strict_types=1);
 namespace PangzLab\App\Service;
 
-use PangzLab\Lib\Data\DatabaseParameter as DbParam;
-
+use PangzLab\App\Repository\DatabaseRepository;
 class DatabaseService
 {
-    protected $dbRepo;
-    protected $dbInstance;
+    private $repo;
+    private $dbCollection;
+    private $instances;
 
     public function __construct()
-    {
-        $this->dbRepo = new MySqlDbService(
-            new DbParam([
-            'database'  => 'dudezmobi_staking',
-            'host'      => 'localhost',
-            'username'  => 'root',
-            'password'  => '',
-        ]));
-        $this->dbInstance = $this->instantiateDbRepo();
+    {   
+        $this->repo = new DatabaseRepository();
+        $this->dbCollection['mysql'] = $this->repo->getMysql();
     }
 
-    public function getInstance()
+    public function getInstance(string $dbName)
     {
-        return $this->dbInstance;
-    }
+        if(!isset($this->dbCollection[$dbName])) {
+            throw new \InvalidArgumentException(
+                " Database instance does not exist! [$dbName]"
+            );
+        }
 
-    public function getRecords($params = [])
-    {
-        $param = array_merge(
-            MySqlDbService::$parameterFormat,
-            $params
-        );
-        return $this->dbInstance->getData(new DbParam($param));
-    }
+        if(!isset($this->instances[$dbName])) {
+            $this->instances[$dbName] = $this->dbCollection[$dbName]->establishConnection();
+        }
 
-    private function instantiateDbRepo()
-    {
-        return $this->dbRepo->establishConnection();
+        return $this->instances[$dbName];
     }
 }

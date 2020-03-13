@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 namespace PangzLab\App\Service;
+
 use PangzLab\Lib\Data\StructuredDataInterface;
-use PangzLab\Lib\Data\DatabaseParameter as DbParam;
 
 class MySqlDbService implements StructuredDataInterface
 {
@@ -14,7 +14,7 @@ class MySqlDbService implements StructuredDataInterface
     private $instance;
 
     const SELECT_TEMPLATE = "SELECT %s FROM %s %s %s %s";
-    public static $parameterFormat = ["","","","","",
+    public static $parameterFormat = [
         "_columns" => "*",
         "_table" => "",
         "_condition" => "",
@@ -22,12 +22,12 @@ class MySqlDbService implements StructuredDataInterface
         "_orderBy" => ""
     ];
 
-    public function __construct(DbParam $param)
+    public function __construct(array $param)
     {
-        $this->host     = $param->host;
-        $this->username = $param->username;
-        $this->password = $param->password;
-        $this->database = $param->database;
+        $this->host     = $param['host'] ?? "";
+        $this->username = $param['username'] ?? "";
+        $this->password = $param['password'] ?? "";
+        $this->database = $param['database'] ?? "";
         $this->dsn      = "mysql:dbname=".$this->database.";host=".$this->host;
     }
 
@@ -41,37 +41,44 @@ class MySqlDbService implements StructuredDataInterface
 
     }
 
-    public function createData(DbParam $param)
+    public function createData(array $param)
     {
 
     }
 
-    public function getData(DbParam $p)
+    public function getData(array $params, ?string $rowModelClass = null)
     {
         //@TODO should have a binding instead of simple substitution
-        $binding = [];
-        $sql = sprintf(
+        $binding  = [];
+        $params   = (object) array_merge(MySqlDbService::$parameterFormat, $params);
+        $fetch    = (!is_null($rowModelClass))? [ 
+            \PDO::FETCH_CLASS,
+            $rowModelClass
+        ] : [];
+        $sql      = sprintf(
             static::SELECT_TEMPLATE,
-            $p->_columns,
-            $p->_table,
-            (!empty($p->_condition))? "WHERE ".$p->_condition: "",
-            (!empty($p->_groupBy))? "GROUP BY ".implode(", ", $p->_groupBy): "",
-            (!empty($p->_orderBy))? "ORDER BY ".implode(", ", $p->_orderBy): ""
+            $params->_columns,
+            $params->_table,
+            (!empty($params->_condition))? "WHERE ".$params->_condition: "",
+            (!empty($params->_groupBy))? "GROUP BY ".implode(", ", $params->_groupBy): "",
+            (!empty($params->_orderBy))? "ORDER BY ".implode(", ", $params->_orderBy): ""
         );
 
         $stmt = $this->instance->prepare($sql);
-        if($stmt->execute($binding)) {            
-            return $stmt->fetchAll();
+
+        if($stmt->execute($binding)) {
+            return $stmt->fetchAll(...$fetch);
         }
+
         return [];
     }
 
-    public function updateData(DbParam $param)
+    public function updateData(array $param)
     {
 
     }
 
-    public function deleteData(DbParam $param)
+    public function deleteData(array $param)
     {
 
     }
@@ -81,7 +88,10 @@ class MySqlDbService implements StructuredDataInterface
         $this->instance = new \PDO(
             $this->dsn,
             $this->username,
-            $this->password
+            $this->password,
+            [
+                \PDO::ATTR_PERSISTENT => true
+            ]
         );
         return $this;
     }
