@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace PangzLab\App\Routing;
+namespace PangzLab\App\Routing%s;
 
 use DI\Container;
 use Psr\Http\Message\ResponseInterface as Response;

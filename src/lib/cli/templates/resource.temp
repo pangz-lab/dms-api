@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
-namespace PangzLab\App\Resource;
+namespace PangzLab\App\Resource%s;
 
 use PangzLab\Lib\Resource\AbstractResource;
 
-class DbSetting extends AbstractResource
+class % extends AbstractResource
 {    
     protected static function getFileBasePath(): string
     {

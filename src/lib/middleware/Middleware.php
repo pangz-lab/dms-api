@@ -10,7 +10,7 @@ use Slim\App;
 use PangzLab\Lib\Interfaces\ExecutionContextInterface;
 
 class Middleware
-{   
+{
     const NAMESPACE = 'PangzLab\\App\\Middleware\\';
     private static $slimApp;
     private static $httpMethod;
@@ -30,19 +30,21 @@ class Middleware
 
     private static function resolveSequence()
     {
-        $methodName = 'method'.\ucfirst(static::$httpMethod);
+        $methodMiddleware = 'method'.\ucfirst(static::$httpMethod);
         static::$collection = \array_merge(
             static::$collection::app(),
-            static::$collection::{$methodName}()
+            static::$collection::{$methodMiddleware}()
         );
+        
         if(empty(static::$collection)) { return;}
     }
 
     private static function process()
     {
-        static::$slimApp->add(
-            static::resolveDefinitionToObject(static::$collection)
-        );
+        $middleWareDefinition = static::resolveDefinitionToObject(static::$collection);
+        foreach($middleWareDefinition as $currentMiddleWare) {
+            static::$slimApp->add(static::createWrapperClass($currentMiddleWare));
+        }
     }
 
     private static function resolveDefinitionToObject(array $classes)
@@ -60,26 +62,28 @@ class Middleware
             ];
         }
 
+        return $definition;
+    }
+
+    private static function createWrapperClass($definition)
+    {
         return new class($definition) {
 
-            private static $definition = [];
+            private $definition = [];
 
             public function __construct($definition)
             {
-                static::$definition = $definition;
+                $this->definition = $definition;
             }
 
             public function __invoke(
                 Request $request,
                 RequestHandler $handler
             ): Response {
-                foreach(static::$definition as $currentDef) {
-                    $currentDef['instance']->process(
-                        $request,
-                        $handler
-                    );
-                }
-                return $handler->handle($request);
+                return $this->definition['instance']->process(
+                    $request,
+                    $handler
+                );
             }
         };
     }

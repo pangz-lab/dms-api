@@ -3,9 +3,16 @@ require_once("../config.php");
 main($argv);
 
 function main($args) {
-    
-    if(!isset($args[1],$args[2],$args[3])) {
-        print" \e[31m [Error] \e[0m  Arguments does not exist!\n ";
+
+    if( !isset($args[1]) ||
+        (isset($args[1]) && in_array($args[1], ['--help']))
+    ) {
+        showHelp();
+        exit();
+    }
+
+    if(!isset($args[1], $args[2], $args[3])) {
+        print"\e[31m[Error] \e[0m Arguments unknown. See the the following!\n ";
         showHelp();
         exit();
     }
@@ -13,12 +20,13 @@ function main($args) {
     $operation = $args[1];
     $fileType  = $args[2];
     $fileName  = $args[3];
+    $extension = $args[4] ?? null;
 
-    if(in_array($fileType, ['mi', 'mid', 'middle'])) {
+    if(in_array($fileType, ['mi', 'mid', 'middle', 'middleware'])) {
         $fileType  = 'middleware';
-    } elseif(in_array($fileType, ['ro', 'rou', 'routing'])) {
+    } elseif(in_array($fileType, ['ro', 'rou', 'rout', 'routing'])) {
         $fileType = 'routing';
-    } elseif(in_array($fileType, ['se', 'ser', 'service'])) {
+    } elseif(in_array($fileType, ['se', 'ser', 'serv', 'service'])) {
         $fileType = 'service';
     } elseif(in_array($fileType, ['re', 'rep', 'repo', 'repository'])) {
         $fileType = 'repository';
@@ -41,7 +49,7 @@ function main($args) {
         die(" \e[31m [Error] \e[0m  Action does not exist!\n ");
     }
 
-    $result = $method($param = ['name' => $fileName]);
+    $result = $method($param = ['name' => $fileName, "extension" => $extension]);
     if($result['stat']) {
         print " \e[32m [OK] \e[0m File successfully created: ".$result['name']."\n";
     } else {
@@ -66,6 +74,24 @@ function create_repository($param) {
 }
 
 function create_model($param) {
+    $propertyList = [];
+
+    $resolveFormat = function($props) {
+        return str_replace(" ", "_", $props);
+    };
+    $createProperty = function($item) {
+        $form = "    private $%s;";
+        return sprintf($form, $item);
+    };
+
+    if(!is_null($param["extension"])) {
+        $propertyList = array_map(
+            $createProperty,
+            explode(",", $resolveFormat($param["extension"]))
+        );
+        $param["extension"] = implode("\n", $propertyList);
+    }
+
     return create('MODEL', $param);
 }
 
@@ -74,31 +100,60 @@ function create_resource($param) {
 }
 
 function create($fileType, $param) {
+    
     $type       = strtoupper($fileType);
-    $sourcePath = CLI_PATHS[$type]["template"];
-    $targetPath = CLI_PATHS[$type]["target"].DS.$param['name'].".php";
+    $fileName   = $param['name'];
+    $sourcePath = str_replace("\\", DS, CLI_PATHS[$type]["template"]);
+    $targetPath = str_replace("\\", DS, CLI_PATHS[$type]["target"].DS.$fileName.".php");
+    $className  = basename($fileName);
+    $classDir   = dirname($targetPath);
+    $otherParam = $param["extension"] ?? "";
+    $parentDir  = "";
     $stat       = false;
+
+    if(fileHasParentFolder($fileName) && !file_exists($targetPath)) {
+        $parentDir = "\\".dirname(str_replace(DS, "\\", $fileName));
+        if(!file_exists($classDir)) {
+            mkdir(dirname($targetPath), 0775, true);
+        }
+    }
+
     if(!file_exists($targetPath)) {
         touch($targetPath);
         chmod($targetPath, 0775);
-        $content = file_get_contents($sourcePath);
-        $stat    = (file_put_contents($targetPath ,sprintf($content, $param['name'])) > 0);
+        $content   = file_get_contents($sourcePath);
+        $valueList = [$parentDir, $className, $otherParam];
+        $stat      = (
+            file_put_contents(
+                $targetPath,
+                sprintf(
+                    $content,
+                    ...$valueList
+                )
+            ) > 0
+        );
     }
 
+    //@TODO, update this return. Remove msg.
     return [
         "stat" => $stat,
         "name" => $targetPath,
-        "msg"  => "Failed to create file. File might already been existed."
+        "msg"  => "Failed to create file. File might already be existing."
     ];
 }
 
+function fileHasParentFolder($dirName) {
+    return (bool) strstr(str_replace("\\", DS, $dirName), DS);
+}
+
 function showHelp() {
+    $mainCmd = "./pangz-cli.sh";
     $l = "\e[35m";
     $c = "\e[32m";
     $e = "\e[0m";
     print "\n$c#####################################################$e\n";
     print "$c#                                                   #$e\n";
-    print "$c#    PANGZCL   LIPANG   PA   NG  NGZCLI  ANGZCLI    #$e\n";
+    print "$c#     PANGZCL  LIPANG   PA   NG  NGZCLI  ANGZCLI    #$e\n";
     print "$c#    IP    AN ZC    LI ZCLI  PA PA            PAN   #$e\n";
     print "$c#    GZCLIPA  PANGZCLI NG ZC LI NG   ZCL    GZ      #$e\n";
     print "$c#    NG       PA    NG PA  NGZC IP    AN CLI        #$e\n";
@@ -110,11 +165,11 @@ function showHelp() {
     print "$c#                                                   #$e\n";
     print "$c#####################################################$e\n";
     print "\n\n";
-    print " pangz [operation] [type] [FileName] \n\n";
+    print " $mainCmd [operation] [type] [FileName] \n\n";
     $files = ['middleware','model','repository','routing','service', 'resource'];
     $ope   = "create";
 
     foreach($files as $currentFile) {
-        print "$l pangz $ope $currentFile [FileName] $e\n";
+        print "$l $mainCmd $ope $currentFile [FileName] $e\n";
     }
 }

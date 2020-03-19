@@ -1,8 +1,18 @@
 <?php
 declare(strict_types=1);
-namespace PangzLab\App\Model;
+namespace PangzLab\App\Model%s;
 
-class %s
+use PangzLab\Lib\Model;
+
+class %s extends Model
 {
-    public $propertyName
+    /**
+    * 1. This provides a default constructor for assigning values
+    *    the model properties.
+    * 2. You can still override it's definition by creating a custom one
+    * 3. All properties is provided by automatic getter so creating
+    *    a getter for each property is unncessary. You can access it like
+    *    $yourInstance->getId();
+    */
+%s
 }
