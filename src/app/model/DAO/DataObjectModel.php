@@ -10,26 +10,24 @@ class DataObjectModel extends Model
     public function __construct()
     {
         $propertyList = get_class_vars(get_class($this));
-        $ope          = "";
 
         foreach($propertyList as $property => $value) {
             if($property == 'getterMethods') {break;}
-            $ope = $this->convertToGetter($property);
-            $this->getterMethods[$ope] = $property;
+
+            $this->getterMethods[$this->createGetter($property)] = $property;
         }
     }
 
     public function __call($name, $args)
     {
         if(!isset($this->getterMethods[$name])) {
-            var_dump($this->getterMethods);
-            throw new ModelException("Operation [$name] is not allowed!");
+            throw new ModelException("Operation [$name] is not allowed in class ".__CLASS__."!");
         }
-        $prop = $this->getterMethods[$name];
-        return $this->$prop;
+
+        return $this->{$this->getterMethods[$name]};
     }
 
-    private function convertToGetter(string $prop)
+    private function createGetter(string $prop)
     {
         $component = explode("_", $prop);
         if(count($component) > 1) {
