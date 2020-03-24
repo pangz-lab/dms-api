@@ -9,7 +9,7 @@ class Model
     public function __construct(array $params)
     {
         $propertyList = get_class_vars(get_class($this));
-        foreach($propertyList as $currentProperty) {
+        foreach($propertyList as $currentProperty => $value) {
             $this->$currentProperty = $params[$currentProperty] ?? null;
         }
     }
@@ -18,7 +18,7 @@ class Model
     {
         $allowedOperation = [ 'get' ];
         $operation        = strtolower(substr($name, 0, 3));
-        $property         = lcfirst(substr($name, 2));
+        $property         = lcfirst(substr($name, 3));
 
         if(!in_array($operation, $allowedOperation)) {
             throw new ModelException("Operation [$operation] is not allowed!");

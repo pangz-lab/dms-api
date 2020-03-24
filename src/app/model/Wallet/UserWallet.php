@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
-namespace PangzLab\App\Model%s;
+namespace PangzLab\App\Model\Wallet;
 
 use PangzLab\Lib\Model\Model;
 
-class %s extends Model
+class UserWallet extends Model
 {
     /**
     * 1. This provides a default constructor for assigning values
@@ -14,5 +14,9 @@ class %s extends Model
     *    a getter for each property is unncessary. You can access it like
     *    $yourInstance->getId();
     */
-%s
+    protected $id;
+    protected $address;
+    protected $addressType;
+    protected $walletType;
+    protected $status;
 }

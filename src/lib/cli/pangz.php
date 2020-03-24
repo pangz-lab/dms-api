@@ -80,7 +80,7 @@ function create_model($param) {
         return str_replace(" ", "_", $props);
     };
     $createProperty = function($item) {
-        $form = "    private $%s;";
+        $form = "    protected $%s;";
         return sprintf($form, $item);
     };
 

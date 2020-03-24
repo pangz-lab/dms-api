@@ -3,7 +3,10 @@ declare(strict_types=1);
 namespace PangzLab\App\Service;
 
 use PangzLab\App\Repository\DatabaseRepository;
-class DatabaseService
+use PangzLab\Lib\Data\StructuredDataInterface;
+use PangzLab\App\Interfaces\Service\DatabaseInterface;
+
+class DatabaseService implements DatabaseInterface
 {
     private $repo;
     private $dbCollection;
@@ -15,7 +18,7 @@ class DatabaseService
         $this->dbCollection['mysql'] = $this->repo->getMysql();
     }
 
-    public function getInstance(string $dbName)
+    public function getInstance(string $dbName): StructuredDataInterface
     {
         if(!isset($this->dbCollection[$dbName])) {
             throw new \InvalidArgumentException(
