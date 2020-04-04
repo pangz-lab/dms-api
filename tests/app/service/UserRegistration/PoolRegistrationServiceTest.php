@@ -4,7 +4,7 @@ use PangzLab\App\Model\User\JoiningUser;
 use PangzLab\App\Service\DatabaseService;
 use PangzLab\App\Service\DatabaseTransaction\DatabaseTransactionService;
 use PangzLab\App\Service\UserRegistration\PoolRegistrationService;
-use PangzLab\App\Repository\User\TemporaryPoolUser;
+use PangzLab\App\Repository\User\PoolUserRepo;
 
 final class PoolRegistrationServiceTest extends TestCase
 {
@@ -19,7 +19,7 @@ final class PoolRegistrationServiceTest extends TestCase
         //Disconnect DB Connection - create stub
         static::$dbTransaction = new DatabaseTransactionService(new DatabaseService());
         static::$registrationService = new PoolRegistrationService(static::$dbTransaction);
-        static::$tempUserRepo = new TemporaryPoolUser(static::$dbTransaction);
+        static::$tempUserRepo = new PoolUserRepo(static::$dbTransaction);
         static::$validUser = new JoiningUser([
             "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
             "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",

@@ -2,9 +2,9 @@
 declare(strict_types=1);
 namespace PangzLab\App\Model\DAO\Wallet;
 
-use PangzLab\Lib\Model\Model;
+use PangzLab\App\Model\DAO\DataObjectModel;
 
-class WalletDAO extends Model
+class WalletDAO extends DataObjectModel
 {
     /**
     * 1. This provides a default constructor for assigning values

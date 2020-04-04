@@ -5,7 +5,7 @@ namespace PangzLab\App\Repository\User;
 use PangzLab\App\Repository\AppRepository;
 use PangzLab\App\Model\User\JoiningUser;
 
-class PoolUser extends AppRepository
+class OfficialPoolUserRepo extends AppRepository
 {
     public function add(JoiningUser $user)
     {
@@ -30,13 +30,13 @@ class PoolUser extends AppRepository
             ":status"
         ];
         $columns = [
-            ":public_address",
-            ":wallet_id",
-            ":email",
-            ":secret_word1",
-            ":secret_word2",
-            ":secret_word3",
-            ":status"
+            "public_address",
+            "wallet_id",
+            "email",
+            "secret_word1",
+            "secret_word2",
+            "secret_word3",
+            "status"
         ];
 
         return $insert->inTable('dms_user')
@@ -81,7 +81,10 @@ class PoolUser extends AppRepository
 
     public function deleteById(int $id)
     {
-        $delete = $this->getDbService()['delete'];
-        return $delete->inTable('dms_user')->where("id = :id")->boundBy([':id'=> $id])->execute();
+        return $this->getDbService()['delete']
+            ->inTable('dms_user')
+            ->where("id = :id")
+            ->boundBy([':id'=> $id])
+            ->execute();
     }
 }

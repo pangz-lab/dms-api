@@ -5,9 +5,21 @@ namespace PangzLab\App\Config;
 class Status
 {
     const USER_REGISTRATION = [
-        "FOR_CONFIRMATION"  => 1,
-        "CONFIRMED"         => 0,
-        "CANCELLED"         => -1,
+        "ACTIVE"           => 1,
+        "CONFIRMED"        => 2,
+        "FOR_CONFIRMATION" => 3,
+        "CANCELLED"        => 9,
+    ];
+
+    const ACCOUNT_REGISTRATION = [
+        "FOR_CONFIRMATION" => 2,
+        "ACTIVE"           => 1,
+        "INACTIVE"         => 0,
+    ];
+
+    const WALLET_REGISTRATION = [
+        "ACTIVE"           => 1,
+        "INACTIVE"         => 0,
     ];
 
     const RECORD_STATE = [

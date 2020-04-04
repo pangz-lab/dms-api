@@ -2,86 +2,102 @@
 declare(strict_types=1);
 namespace PangzLab\App\Service\UserRegistration;
 
+use PangzLab\App\Interfaces\Service\DatabaseTransactionInterface;
 use PangzLab\App\Interfaces\Service\RegistrationInterface;
+use PangzLab\App\Interfaces\Model\AbstractUser;
+use PangzLab\App\Model\User\SystemUser;
+use PangzLab\App\Repository\Wallet\CoinWalletRepo;
+use PangzLab\App\Repository\User\OfficialPoolUserRepo;
+use PangzLab\App\Repository\User\PoolUserRepo;
+use PangzLab\App\Repository\Account\SystemAccountRepo;
+use PangzLab\App\Service\InputValidation as Check;
+use PangzLab\App\Config\Type;
+use PangzLab\App\Config\Status;
 
 class OfficialPoolRegistrationService implements RegistrationInterface
 {
-    private $dbTransactionService;
-    private $dbService = [];
-    
+    private $repos;
+
     public function __construct(
         DatabaseTransactionInterface $dbTransactionService
     ) {
-        $this->dbTransactionService = $dbTransactionService;
-        $this->dbService['insert']  = $dbTransactionService->insert();
-        $this->dbService['query']   = $dbTransactionService->query();
-    }
-    
-    public function register(GenericUser $user): ?int
-    {
-        $insert = $this->dbService['insert'];
-        $secretWords = $user->getSecretWords();
-        $binding = [
-            ":public_address" => $user->getPublicAddress(),
-            ":wallet_address" => $user->getWalletAddress(),
-            ":email" => $user->getEmailAddress(),
-            ":secret1" => $secretWords[0],
-            ":secret2" => $secretWords[1],
-            ":secret3" => $secretWords[2],
-            ":status" => $user->getStatus()
-        ];
-        $values = [
-            ":public_address",
-            ":wallet_address",
-            ":email",
-            ":secret1",
-            ":secret2",
-            ":secret3",
-            ":status"
-        ];
-        $columns = [
-            "public_address",
-            "wallet_address",
-            "email",
-            "secret_word1",
-            "secret_word2",
-            "secret_word3",
-            "status",
-        ];
-        return $insert->inTable('dmstemp_user')
-            ->withValues([$values])
-            ->forColumns($columns)
-            ->boundBy($binding)
-            ->execute();
+        $this->repos['coinWallet']    = new CoinWalletRepo($dbTransactionService);
+        $this->repos['poolUser']      = new OfficialPoolUserRepo($dbTransactionService);
+        $this->repos['tempPoolUser']  = new PoolUserRepo($dbTransactionService);
+        $this->repos['systemAccount'] = new SystemAccountRepo($dbTransactionService);
     }
 
-    public function isAllowed(GenericUser $user): bool
+    public function register(AbstractUser $user): ?int
     {
-        if(!$this->hasValidValues($user)) { return false; }
-        if($this->isExisting($user)) { return false; }
+        $walletId = $this->repos['coinWallet']->add(new CoinWallet([
+            "address"     => $user->getWalletAddress(),
+            "addressType" => Type::WALLET_ADDRESS["T_ADDRESS"],
+            "walletType"  => Type::COIN_WALLET["VERUS_COIN"],
+            "status"      => Status::WALLET_REGISTRATION["ACTIVE"],
+        ]));
+
+        $userId = $this->repos['poolUser']->add(new JoiningUser([
+            "publicAddress"=> $user->getPublicAddress(),
+            "walletId"     => $walletId,
+            "emailAddress" => $user->getEmailAddress(),
+            "secretWords"  => $user->getSecretWords(),
+            "status"       => Status::USER_REGISTRATION["ACTIVE"],
+        ]));
+
+        $this->repos['systemAccount']->add(new SystemUser([
+            "userId"   => $userId,
+            "username" => $user->getEmailAddress(),
+            "password" => $user->getPublicAddress(),
+            "role"     => Type::ACCOUNT_ROLE["POOL_USER"],
+            "status"   => Status::ACCOUNT_REGISTRATION["FOR_CONFIRMATION"],
+        ]));
+    }
+
+    public function isAllowed(AbstractUser $user): bool
+    {
+        if(
+            $this->repos['coinWallet']->exist(new CoinWallet([
+                "address"     => $user->getWalletAddress(),
+                "addressType" => Type::WALLET_ADDRESS["T_ADDRESS"],
+                "walletType"  => Type::COIN_WALLET["VERUS_COIN"],
+            ])) ||
+            $this->repos['poolUser']->exist(new JoiningUser([
+                "publicAddress"=> $user->getPublicAddress(),
+                "emailAddress" => $user->getEmailAddress(),
+            ])) ||
+            $this->repos['systemAccount']->exist(new SystemUser([
+                "username" => $user->getEmailAddress(),
+                "password" => $user->getPublicAddress(),
+                "role"     => Type::ACCOUNT_ROLE["POOL_USER"],
+            ]))
+        ) {
+            return false;
+        }
 
         return true;
     }
 
-    public function isExisting(GenericUser $user): bool
+    public function sendConfirmationEmail(AbstractUser $user)
     {
-        $query = $this->dbService['query'];
-        $condition = "
-            email = :email AND
-            public_address = :public_address AND
-            wallet_address = :wallet_address
-        ";
-        $binding = [
-            ":email"          => $user->getEmailAddress(),
-            ":public_address" => $user->getPublicAddress(),
-            ":wallet_address" => $user->getWalletAddress()
-        ];
 
-        $result = $query->inTable('dmstemp_user')
-            ->where($condition)
-            ->boundBy($binding)
-            ->execute();
+    }
 
-        return (count($result) > 0);
+    public function cancelTemporaryPoolUser(AbstractUser $user)
+    {
+        return $this->repos['tempPoolUser']->updateStatusById(
+            $user->getId(),
+            Status::USER_REGISTRATION["CANCELLED"]
+        );
+    }
+
+    protected function hasValidValues(AbstractUser $user)
+    {
+        return (
+            Check::isPublicAddress($user->getPublicAddress()) &&
+            Check::isWalletAddress($user->getWalletAddress()) &&
+            Check::isEmail($user->getEmailAddress()) &&
+            Check::isSecretWords($user->getSecretWords()) &&
+            Check::isStatus($user->getStatus())
+        );
     }
 }

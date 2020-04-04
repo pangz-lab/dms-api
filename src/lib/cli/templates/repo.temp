@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace PangzLab\App\Repository%s;
 
-use DI\Container;
 use PangzLab\Lib\Repository\Repository;
 
 class %s extends Repository

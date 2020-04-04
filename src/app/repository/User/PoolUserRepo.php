@@ -5,7 +5,7 @@ namespace PangzLab\App\Repository\User;
 use PangzLab\App\Repository\AppRepository;
 use PangzLab\App\Model\User\JoiningUser;
 
-class TemporaryPoolUser extends AppRepository
+class PoolUserRepo extends AppRepository
 {
     public function add(JoiningUser $user)
     {
@@ -80,9 +80,17 @@ class TemporaryPoolUser extends AppRepository
             ->execute();
     }
 
+    public function updateStatusById(int $id, int $status)
+    {
+
+    }
+
     public function deleteById(int $id)
     {
-        $delete = $this->getDbService()['delete'];
-        return $delete->inTable('dmstemp_user')->where("id = :id")->boundBy([':id'=> $id])->execute();
+        return$this->getDbService()['delete']
+            ->inTable('dmstemp_user')
+            ->where("id = :id")
+            ->boundBy([':id'=> $id])
+            ->execute();
     }
 }

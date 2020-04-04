@@ -10,6 +10,11 @@ class Type
     ];
 
     const COIN_WALLET = [
-        "VERUS" => 'vrsc',
+        "VERUS_COIN" => 'vrsc',
+    ];
+
+    const ACCOUNT_ROLE = [
+        "ADMIN"     => 0,
+        "POOL_USER" => 9,
     ];
 }

@@ -4,24 +4,25 @@ namespace PangzLab\App\Service\UserRegistration;
 
 use PangzLab\App\Interfaces\Service\DatabaseTransactionInterface;
 use PangzLab\App\Interfaces\Service\RegistrationInterface;
-use PangzLab\App\Model\User\GenericUser;
+use PangzLab\App\Interfaces\Model\AbstractUser;
 use PangzLab\App\Service\InputValidation as Check;
-use PangzLab\App\Repository\User\TemporaryPoolUser;
+use PangzLab\App\Repository\User\PoolUserRepo;
 
 class PoolRegistrationService implements RegistrationInterface
 {
+    private $temporaryPoolUser;
     public function __construct(
         DatabaseTransactionInterface $dbTransactionService
     ) {
-        $this->temporaryPoolUser    = new TemporaryPoolUser($dbTransactionService);
+        $this->temporaryPoolUser = new PoolUserRepo($dbTransactionService);
     }
 
-    public function register(GenericUser $user): ?int
+    public function register(AbstractUser $user): ?int
     {
         return $this->temporaryPoolUser->add($user);
     }
 
-    public function isAllowed(GenericUser $user): bool
+    public function isAllowed(AbstractUser $user): bool
     {
         if(!$this->hasValidValues($user)) { return false; }
         if($this->isExisting($user)) { return false; }
@@ -29,12 +30,12 @@ class PoolRegistrationService implements RegistrationInterface
         return true;
     }
 
-    public function isExisting(GenericUser $user): bool
+    public function isExisting(AbstractUser $user): bool
     {
         return $this->temporaryPoolUser->exist($user);
     }
 
-    protected function hasValidValues(GenericUser $user)
+    protected function hasValidValues(AbstractUser $user)
     {
         return (
             Check::isPublicAddress($user->getPublicAddress()) &&

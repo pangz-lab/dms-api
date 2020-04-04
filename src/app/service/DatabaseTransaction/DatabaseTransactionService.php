@@ -2,6 +2,7 @@
 declare(strict_types=1);
 namespace PangzLab\App\Service\DatabaseTransaction;
 
+use PangzLab\Lib\Data\StructuredDataInterface;
 use PangzLab\App\Interfaces\Service\DatabaseTransactionInterface;
 use PangzLab\App\Interfaces\Service\DatabaseInterface;
 use PangzLab\App\Service\DatabaseTransaction\InsertService;
@@ -15,10 +16,12 @@ class DatabaseTransactionService implements DatabaseTransactionInterface
     private $dbService;
     private $dbInstance;
 
-    public function __construct(DatabaseInterface $db)
-    {
+    public function __construct(
+        DatabaseInterface $db,
+        ?StructuredDataInterface $dbInstance = null
+    ) {
         $this->dbService  = $db;
-        $this->dbInstance = $db->getInstance("mysql");
+        $this->dbInstance = $dbInstance ?? $db->getInstance("mysql");
     }
 
     public function insert()

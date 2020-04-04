@@ -3,11 +3,11 @@ declare(strict_types=1);
 namespace PangzLab\App\Repository\Wallet;
 
 use PangzLab\App\Repository\AppRepository;
-use PangzLab\App\Model\Wallet\UserWallet;
+use PangzLab\App\Interfaces\Model\AbstractWallet;
 
-class Wallet extends AppRepository
+class CoinWalletRepo extends AppRepository
 {
-    public function add(UserWallet $wallet)
+    public function add(AbstractWallet $wallet)
     {
         $insert = $this->getDbService()['insert'];
         $binding = [
@@ -39,7 +39,7 @@ class Wallet extends AppRepository
             ->execute();
     }
 
-    public function exist(UserWallet $wallet)
+    public function exist(AbstractWallet $wallet)
     {
         $query = $this->getDbService()['query'];
         $condition = "
@@ -76,7 +76,10 @@ class Wallet extends AppRepository
 
     public function deleteById(int $id)
     {
-        $delete = $this->getDbService()['delete'];
-        return $delete->inTable('dms_wallet')->where("id = :id")->boundBy([':id'=> $id])->execute();
+        return $this->getDbService()['delete']
+            ->inTable('dms_wallet')
+            ->where("id = :id")
+            ->boundBy([':id'=> $id])
+            ->execute();
     }
 }

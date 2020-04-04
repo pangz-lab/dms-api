@@ -7,13 +7,13 @@ use PangzLab\Lib\Model\Model;
 class DataObjectModel extends Model
 {
     protected $getterMethods = [];
+
     public function __construct()
     {
         $propertyList = get_class_vars(get_class($this));
 
         foreach($propertyList as $property => $value) {
             if($property == 'getterMethods') {break;}
-
             $this->getterMethods[$this->createGetter($property)] = $property;
         }
     }
@@ -21,7 +21,9 @@ class DataObjectModel extends Model
     public function __call($name, $args)
     {
         if(!isset($this->getterMethods[$name])) {
-            throw new ModelException("Operation [$name] is not allowed in class ".__CLASS__."!");
+            throw new ModelException(
+                "Operation [$name] is not allowed in class ".__CLASS__."!"
+            );
         }
 
         return $this->{$this->getterMethods[$name]};
