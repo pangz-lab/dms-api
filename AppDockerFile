@@ -1,2 +1,11 @@
 FROM php:7.3-apache
-COPY ["./public/","./src/","./composer.json", "/var/www/html/"]
+WORKDIR /var/www/html/
+COPY . /var/www/html/
+RUN apt-get update \
+  && apt-get install -y git zip curl \
+  # && cd /var/www/html/ \
+  && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+  && php composer-setup.php \
+  && php -r "unlink('composer-setup.php');" \
+  # && cd /var/www/html/ \
+  && php composer.phar install
