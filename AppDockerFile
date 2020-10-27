@@ -2,10 +2,15 @@ FROM php:7.3-apache
 WORKDIR /var/www/html/
 COPY . /var/www/html/
 RUN apt-get update \
-  && apt-get install -y git zip curl \
+  && apt-get install -y git zip curl vim \
   # && cd /var/www/html/ \
   && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
   && php composer-setup.php \
   && php -r "unlink('composer-setup.php');" \
   # && cd /var/www/html/ \
-  && php composer.phar install
+  && php composer.phar install \
+  # && php composer.phar require selective/basepath \
+  # Enable apache modrewrite
+  && a2enmod rewrite \
+  #systemctl restart apache2
+  && chmod 0777 public/tl.log
