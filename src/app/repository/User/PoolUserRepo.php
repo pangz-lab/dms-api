@@ -14,6 +14,7 @@ class PoolUserRepo extends AppRepository
         $binding = [
             ":public_address" => $user->getPublicAddress(),
             ":wallet_address" => $user->getWalletAddress(),
+            ":transaction_id" => $user->getTransactionId(),
             ":email" => $user->getEmailAddress(),
             ":secret1" => $secretWords[0],
             ":secret2" => $secretWords[1],
@@ -23,6 +24,7 @@ class PoolUserRepo extends AppRepository
         $values = [
             ":public_address",
             ":wallet_address",
+            ":transaction_id",
             ":email",
             ":secret1",
             ":secret2",
@@ -32,6 +34,7 @@ class PoolUserRepo extends AppRepository
         $columns = [
             "public_address",
             "wallet_address",
+            "transaction_id",
             "email",
             "secret_word1",
             "secret_word2",

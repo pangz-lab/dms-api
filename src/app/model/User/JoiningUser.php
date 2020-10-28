@@ -7,10 +7,11 @@ use PangzLab\App\Interfaces\Model\AbstractUser as User;
 
 class JoiningUser extends User
 {
+    protected $emailAddress  = "";
     protected $publicAddress = "";
     protected $walletId      = "";
     protected $walletAddress = "";
-    protected $emailAddress  = "";
+    protected $transactionId = "";
     protected $secretWords   = [];
     protected $status        = Status::USER_REGISTRATION["FOR_CONFIRMATION"];
 

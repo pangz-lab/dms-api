@@ -40,11 +40,14 @@ class Pool extends Route
         $message = "";
         $userId  = 0;
 
+        $requestBody = json_decode(file_get_contents('php://input'), true);
+
         $joiningUser = new JoiningUser([
-            "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
-            "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
-            "emailAddress"  => "jerold@gmail.com",
-            "secretWords"   => ["test1", "test2", "test3"],
+            "publicAddress" => $requestBody["publicAddress"],
+            "walletAddress" => $requestBody["publicAddress"],
+            "transactionId" => $requestBody["transactionId"],
+            "emailAddress"  => $requestBody["email"],
+            "secretWords"   => $requestBody["secretWords"],
             "status"        => Status::USER_REGISTRATION["FOR_CONFIRMATION"]
         ]);
         
@@ -62,7 +65,8 @@ class Pool extends Route
             ],
             "data" => [
                 "id" => $userId,
-                "body" => json_decode(file_get_contents('php://input'), true)
+                "body" => $requestBody,
+                "validation" => $service->getValidationResult()
             ]
         ];
 

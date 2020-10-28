@@ -8,12 +8,13 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 
 use PangzLab\Lib\Middleware\MiddlewareInterface;
 
-class Parser implements MiddlewareInterface
+class CsrfRequestHandler implements MiddlewareInterface
 {
-    public function process(Request $request, RequestHandler $handler): Response
+    public function methodName(Request $request, RequestHandler $handler): Response
     {
-        file_put_contents("tl.log","Data >> ".serialize($request), FILE_APPEND);
-        file_put_contents('tl.log','Parser,', FILE_APPEND);
+        /**
+        * your code here....
+        */
         return $handler->handle($request);
     }
 }

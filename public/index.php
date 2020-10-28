@@ -5,8 +5,11 @@ use Slim\Psr7\Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Factory\AppFactory;
+use Slim\Exception\HttpInternalServerErrorException;
 
 use PangzLab\App\Module;
+use PangzLab\App\Middleware\ErrorHandlerRenderer\ErrorRequestHandler;
+use PangzLab\App\Middleware\ErrorHandlerRenderer\ErrorRequestRenderer;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -14,61 +17,70 @@ $container = new Container();
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 
-// $beforeMiddleware = function (Request $request, RequestHandler $handler) {
-//     file_put_contents('tl.log','B3,', FILE_APPEND);
-//     $response = $handler->handle($request);
-//     $existingContent = (string) $response->getBody();
-
-//     $response = new Response();
-//     $response->getBody()->write('BEFORE' . $existingContent);
-    
-
-//     return $response;
-// };
-
-// $afterMiddleware = function ($request, $handler) {
-    
-//     file_put_contents('tl.log','A2,', FILE_APPEND);
-//     $response = $handler->handle($request);
-//     $response->getBody()->write('AFTER');
-//     return $response;
-// };
-
-// $routeMW = function ($request, $handler) {    
-//     file_put_contents('tl.log','RM0,', FILE_APPEND);
-//     $response = $handler->handle($request);
-//     $response->getBody()->write('AFTER');
-//     return $response;
-// };
-
-// $app->get('/', function (Request $request, Response $response, $args) {
-//     // print "3\n";
-//     file_put_contents('tl.log','1,', FILE_APPEND);
-//     $response->getBody()->write('Hello World');
-// 	return $response;
-// })->add($routeMW);
-
-// $container->set('db',new  \PangzLab\App\Service\DatabaseService);
-
-// $app->get('/testser', function (Request $request, Response $response, $args) {
-//     // print "3\n";
-//     file_put_contents('tl.log','1,', FILE_APPEND);
-//     $response->getBody()->write('Hello World '. $this->get('db')->getDBName());
-// 	return $response;
-// });
-
-// $app->add($beforeMiddleware);
-// $app->add($afterMiddleware);
-// $app->add($beforeMiddleware);
-// $app->add($afterMiddleware);
-
-// $app->head('/books', function (Request $request, Response $response, $args) {
-//     // print "3\n";
-//     file_put_contents('tl.log','1,', FILE_APPEND);
-//     $response->getBody()->write('Hello World');
-// 	return $response;
-// })->add($routeMW);
-
+// Add Routing Middleware --For error handling
+$app->addRoutingMiddleware();
 
 Module::deploy($app, $container);
+
+/////////////////////////////////////////////////////////
+//For CORS Preflight -- @TODO setup a new middleware for cors preflight
+//http://www.slimframework.com/docs/v3/cookbook/enable-cors.html
+$app->options('/{routes:.+}', function ($request, $response, $args) {
+    return $response;
+});
+
+//For CORS Preflight
+$app->add(function (Request $request, RequestHandler $handler) {
+    $response = $handler->handle($request);
+    // $origin = 'http://localhost:4200';
+    // $origin = 'http://localhost';
+    $origin = 'http://localhost:1989';
+    // $origin = 'http://localhost/dudezmobi_staking/web-ui/dudezmobi-staking';
+    // $allowedOriginList = [
+    //     'http://localhost:4200'
+    // ];
+
+    // if ($request->hasHeader('Origin') && in_array($request->getHeader("Origin"), $allowedOriginList)) {
+    //     $origin = $request->getHeader("Origin");
+    // }
+
+    return $response
+        ->withHeader('Access-Control-Allow-Origin', $origin)
+        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+});
+
+//Handler for all routes should there be an error
+$app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($request, $response) {
+    throw new HttpInternalServerErrorException($request);
+});
+//End CORS
+/////////////////////////////////////////////////////////
+
+
+
+
+/////////////////////////////////////////////////////////////
+// Define Custom Error Handler - this is for error handling
+//Improve this
+// ref http://www.slimframework.com/docs/v4/middleware/error-handling.html
+
+
+$customErrorHandler = new ErrorRequestHandler(
+    $app->getCallableResolver(),
+    $app->getResponseFactory()
+);
+
+// // Add Error Middleware
+$errorMiddleware = $app->addErrorMiddleware(true, true, true);
+
+$errorMiddleware->setDefaultErrorHandler($customErrorHandler);
+$errorHandler = $errorMiddleware->getDefaultErrorHandler();
+// $errorHandler->registerErrorRenderer('text/html', ErrorRequestRenderer::class);
+$errorHandler->registerErrorRenderer('application/json', ErrorRequestRenderer::class);
+$errorHandler->forceContentType('application/json');
+
+//this is for error handling - end 
+/////////////////////////////////////////////////////////////
+
 $app->run();

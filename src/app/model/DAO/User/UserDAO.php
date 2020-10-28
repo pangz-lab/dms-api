@@ -10,6 +10,7 @@ class UserDAO extends DataObjectModel
     protected $public_address;
     protected $wallet_id;
     protected $wallet_address;
+    protected $transaction_id;
     protected $email;
     protected $secret_word1;
     protected $secret_word2;

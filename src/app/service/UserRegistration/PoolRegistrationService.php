@@ -11,6 +11,10 @@ use PangzLab\App\Repository\User\PoolUserRepo;
 class PoolRegistrationService implements RegistrationInterface
 {
     private $temporaryPoolUser;
+    private $validationResult = [
+        "validValues" => true,
+        "newUser" => true,
+    ];
     public function __construct(
         DatabaseTransactionInterface $dbTransactionService
     ) {
@@ -24,8 +28,16 @@ class PoolRegistrationService implements RegistrationInterface
 
     public function isAllowed(AbstractUser $user): bool
     {
-        if(!$this->hasValidValues($user)) { return false; }
-        if($this->isExisting($user)) { return false; }
+        if(!$this->hasValidValues($user)) {
+            $this->validationResult["validValues"] = false;
+            $this->validationResult["newUser"] = false;
+            return false;
+        }
+        if($this->isExisting($user)) {
+            $this->validationResult["validValues"] = true;
+            $this->validationResult["newUser"] = false;
+            return false;
+        }
 
         return true;
     }
@@ -35,11 +47,17 @@ class PoolRegistrationService implements RegistrationInterface
         return $this->temporaryPoolUser->exist($user);
     }
 
-    protected function hasValidValues(AbstractUser $user)
+    public function getValidationResult(): array 
+    {
+        return $this->validationResult;
+    }
+
+    protected function hasValidValues(AbstractUser $user): bool
     {
         return (
             Check::isPublicAddress($user->getPublicAddress()) &&
             Check::isWalletAddress($user->getWalletAddress()) &&
+            Check::isBlockChainTransactionId($user->getTransactionId()) &&
             Check::isEmail($user->getEmailAddress()) &&
             Check::isSecretWords($user->getSecretWords()) &&
             Check::isStatus($user->getStatus())

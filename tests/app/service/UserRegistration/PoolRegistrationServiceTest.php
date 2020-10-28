@@ -23,6 +23,7 @@ final class PoolRegistrationServiceTest extends TestCase
         static::$validUser = new JoiningUser([
             "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
             "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
+            "transactionId" => "a901def22a610cd6e809c2e6765471b8c11732c6334ac7e0f9c9a6e2ee28cc48",
             "emailAddress"  => "jerold@gmail.com",
             "secretWords"   => ["test1", "test2", "test3"],
             "status"        => 1
@@ -60,6 +61,7 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => "",
                     "walletAddress" => "",
+                    "transactionId" => "",
                     "emailAddress"  => "",
                     "secretWords"   => [],
                     "status"        => ""
@@ -70,6 +72,7 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => null,
                     "walletAddress" => null,
+                    "transactionId" => null,
                     "emailAddress"  => null,
                     "secretWords"   => null,
                     "status"        => null,
@@ -80,6 +83,7 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => "",
                     "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
+                    "transactionId" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
                     "emailAddress"  => "jerold@gmail.com",
                     "secretWords"   => ["test1", "test2", "test3"],
                     "status"        => 1
@@ -90,6 +94,18 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
                     "walletAddress" => "",
+                    "transactionId" => "fgasdfasfgsdghdgjdgjgjg",
+                    "emailAddress"  => "jerold@gmail.com",
+                    "secretWords"   => ["test1", "test2", "test3"],
+                    "status"        => 1
+                ])
+            ],
+            "no transaction id" => [
+                false,
+                new JoiningUser([
+                    "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
+                    "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
+                    "transactionId" => "",
                     "emailAddress"  => "jerold@gmail.com",
                     "secretWords"   => ["test1", "test2", "test3"],
                     "status"        => 1
@@ -100,6 +116,7 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
                     "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
+                    "transactionId" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
                     "emailAddress"  => "",
                     "secretWords"   => ["test1", "test2", "test3"],
                     "status"        => 1
@@ -110,6 +127,7 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
                     "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
+                    "transactionId" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
                     "emailAddress"  => "",
                     "secretWords"   => ["test1", "test2", "test3"],
                     "status"        => 1
@@ -120,6 +138,7 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
                     "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
+                    "transactionId" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
                     "emailAddress"  => "jerold@gmail.com",
                     "secretWords"   => [],
                     "status"        => 1
@@ -130,6 +149,7 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
                     "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
+                    "transactionId" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
                     "emailAddress"  => "jerold@gmail.com",
                     "secretWords"   => ["test2"],
                     "status"        => 1
@@ -140,6 +160,7 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
                     "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
+                    "transactionId" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
                     "emailAddress"  => "jerold@gmail.com",
                     "secretWords"   => ["test2", "test2", "test2"],
                     "status"        => 1
@@ -150,6 +171,7 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
                     "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
+                    "transactionId" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
                     "emailAddress"  => "jerold@gmail.com",
                     "secretWords"   => ["tes1", "tes2", "tes3"],
                     "status"        => 1
@@ -160,6 +182,7 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
                     "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
+                    "transactionId" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
                     "emailAddress"  => "jerold@gmail.com",
                     "secretWords"   => ["test1", "test2", "test3"],
                     "status"        => null
@@ -170,6 +193,7 @@ final class PoolRegistrationServiceTest extends TestCase
                 new JoiningUser([
                     "publicAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk4h5jkfasdfd234jk",
                     "walletAddress" => "5234n3jk45sfcdfercdrre5234jkl5h3jk",
+                    "transactionId" => "a901def22a610cd6e809c2e6765471b8c11732c6334ac7e0f9c9a6e2ee28cc48",
                     "emailAddress"  => "jerold@gmail.com",
                     "secretWords"   => ["test1", "test2", "test3"],
                     "status"        => 1

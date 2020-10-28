@@ -24,18 +24,18 @@ class RouteSetting implements RouteMethodCollectionInterface
         ];
     }
 
-    public static function post(): array {
-
+    public static function post(): array
+    {
         $v = self::VERSION;
         return [
-            new RouteUnit("/$v/pool/user/add", ['Pool:addNewUser']),
+            new RouteUnit("/$v/pool/user", ['Pool:addNewUser']),
         ];
     }
     public static function put(): array {return [];}
     public static function delete(): array {return [];}
     public static function head(): array {return [];}
     public static function patch(): array {return [];}
-    public static function options(): array {return [];}
+    public static function options(): array { return []; }
 
     public static function any(): array
     {
