@@ -34,7 +34,7 @@ $app->add(function (Request $request, RequestHandler $handler) {
     $response = $handler->handle($request);
     // $origin = 'http://localhost:4200';
     // $origin = 'http://localhost';
-    $origin = 'http://localhost:1989';
+    $origin = 'http://localhost:9900';
     // $origin = 'http://localhost/dudezmobi_staking/web-ui/dudezmobi-staking';
     // $allowedOriginList = [
     //     'http://localhost:4200'
@@ -59,12 +59,10 @@ $app->map(['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], '/{routes:.+}', function ($
 
 
 
-
 /////////////////////////////////////////////////////////////
 // Define Custom Error Handler - this is for error handling
 //Improve this
 // ref http://www.slimframework.com/docs/v4/middleware/error-handling.html
-
 
 $customErrorHandler = new ErrorRequestHandler(
     $app->getCallableResolver(),
