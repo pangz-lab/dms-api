@@ -15,7 +15,7 @@ class RouteSetting implements RouteMethodCollectionInterface
             // new RouteUnit('/books/{id}', ['User:getBooks'], 'books1'),
             // new RouteUnit('/books/{id}/reset', ['User:getBooks','User:getBooks', 'User:getBooks']),
             // new RouteUnit("/wallets", ['Wallet:getSummary']),
-            new RouteUnit("/$v/transactionsTestGet", ['Transaction:testGetSummary']),            
+            new RouteUnit("/$v/transactionsTestGet", ['Transaction:testGetSummary']),
             
             new RouteUnit("/$v/transactions", ['Transaction:getSummary']),
             new RouteUnit("/$v/transactions/list", ['Transaction:getList']),
