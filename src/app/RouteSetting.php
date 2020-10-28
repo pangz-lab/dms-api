@@ -42,6 +42,7 @@ class RouteSetting implements RouteMethodCollectionInterface
         return [
             new RouteUnit('/', ['User:getList']),
             new RouteUnit('/books', ['User:getList']),
+            new RouteUnit("/test", ['Transaction:getSummary']),
         ];
     }
 }
